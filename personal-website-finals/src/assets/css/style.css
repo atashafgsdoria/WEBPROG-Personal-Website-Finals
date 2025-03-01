@@ -1,0 +1,108 @@
+body {
+    background-color: #DBD8D1;
+  }
+
+  h2 {
+    font-family: "Staatliches", serif;
+    font-weight: 400;
+    font-size: 64px;
+    font-style: normal;
+    margin-bottom: 0px;
+  }
+
+  h1 {
+    font-family: "Staatliches", serif;
+    font-weight: 400;
+    font-size: 96px;
+    font-style: normal;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  
+  p {
+    font-family: "Poppins", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+    text-align: justify;
+  }
+  
+.container {
+    clear: both;
+    padding-left: 100px;
+    padding-right: 5px;
+  }
+  
+  .col-md-9 {
+    float: left;
+    width: 40%;
+    padding: 75px;
+  }
+  
+  .col-md-3 {
+    float: right;
+    width: 40%;
+  }
+  
+@media screen and (max-width: 768px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .col-md-9, .col-md-3 {
+    width: 90%;
+    padding: 20px;
+    text-align: left;
+  }
+
+  .col-md-3 {
+    text-align: left;
+  }
+}
+  
+  .img-fluid {
+    max-width: 68%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  a {
+    text-decoration: none; 
+    display: inline-block;
+    padding: 10px 12px;
+    border-radius: 100%; 
+    background-color: #31589B; 
+    color: #DBD8D1;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 20x;
+    margin-top: 5px;
+    position: relative;
+  }
+  
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+  
+  a:hover::after {
+    content: attr(data-tooltip); 
+    position: absolute; 
+    top: 120%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #31589B; 
+    color: #fff; 
+    padding: 5px 10px; 
+    border-radius: 5px; 
+    white-space: nowrap; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    opacity: 0; 
+    transition: opacity 0.3s; 
+    pointer-events: none; 
+    font-family: "Poppins", serif;
+  }
+  
+  a:hover::after {
+    opacity: 1;
+  }
