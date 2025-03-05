@@ -18,7 +18,7 @@
         </div>
       </nav>
     </div>
-    <br>
+    <br><br>
     <div class="flex-container">
       <div class="flex-item-title">
         <h1>CONNECT</h1>
@@ -40,7 +40,7 @@
       <div data-layer="Line 1" class="Line1"></div>
       <br>
       
-      <h6>SHARE YOUR THOUGHTS</h6>
+      <h6>SHARE YOUR COMMENTS</h6>
       <div class="flex-item-survey">
         <p v-if="message" :class="messageType">{{ message }}</p>
         <input type="text" v-model="inpName" placeholder="Name">
@@ -48,62 +48,98 @@
         <button @click="submitSuggestion" :disabled="loading">
           {{ loading ? "Submitting..." : "Submit" }}
         </button>
-      </div>
+        <br><br>
+        <br>
+        <div data-layer="Line 1" class="Line1"></div>
+        <br>
+        <h6>YOUR COMMENTS</h6>
+        <table class="comment-table" v-if="comments.length">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="comment in comments" :key="comment.id">
+              <td>{{ comment.name }}</td>
+              <td>{{ comment.suggestion }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-else>No comments yet. Be the first to share your thoughts!</p>
+        </div>
     </div>
   </template>
   
   <script>
-  import { ref } from "vue";
-  import { supabase } from "@/supabase";
-  
-  export default {
-    setup() {
-      const inpName = ref("");
-      const inpSuggestion = ref("");
-      const loading = ref(false);
-      const message = ref("");
-      const messageType = ref(""); // "success" or "error" class
-  
-      const showMessage = (msg, type) => {
-        message.value = msg;
-        messageType.value = type;
-  
-        // Message disappears after 3 seconds
-        setTimeout(() => {
-          message.value = "";
-        }, 3000);
-      };
-  
-      const submitSuggestion = async () => {
-        if (!inpSuggestion.value.trim()) {
-          showMessage("I'd love to hear your thoughts. Thank you!", "error");
-          return;
-        }
-  
-        loading.value = true;
-        message.value = ""; // Clear previous messages
-  
-        const { error } = await supabase.from("comments").insert([{ 
-          name: inpName.value || "Anonymous", 
-          suggestion: inpSuggestion.value 
-        }]);
-  
-        loading.value = false;
-  
-        if (error) {
-          console.error("Error submitting suggestion:", error.message);
-          showMessage("Submission failed, please try again.", "error");
-        } else {
-          showMessage("Thank you for sharing your thoughts!", "success");
-          inpName.value = "";
-          inpSuggestion.value = "";
-        }
-      };
-  
-      return { inpName, inpSuggestion, loading, submitSuggestion, message, messageType };
-    }
-  };
-  </script>
+import { ref, onMounted } from "vue";
+import { supabase } from "@/supabase";
+
+export default {
+  setup() {
+    const inpName = ref("");
+    const inpSuggestion = ref("");
+    const loading = ref(false);
+    const message = ref("");
+    const messageType = ref(""); 
+    const comments = ref([]); // Store comments
+
+    // Function to show messages
+    const showMessage = (msg, type) => {
+      message.value = msg;
+      messageType.value = type;
+      setTimeout(() => {
+        message.value = "";
+      }, 3000);
+    };
+
+    // Fetch comments from Supabase
+    const fetchComments = async () => {
+      const { data, error } = await supabase.from("comments").select("*").order("id", { ascending: false });
+      if (error) {
+        console.error("Error fetching comments:", error.message);
+      } else {
+        comments.value = data;
+      }
+    };
+
+    // Submit comment and refresh comments list
+    const submitSuggestion = async () => {
+      if (!inpSuggestion.value.trim()) {
+        showMessage("I'd love to hear your thoughts. Thank you!", "error");
+        return;
+      }
+
+      loading.value = true;
+      message.value = "";
+
+      const { error } = await supabase.from("comments").insert([{ 
+        name: inpName.value || "Anonymous", 
+        suggestion: inpSuggestion.value 
+      }]);
+
+      loading.value = false;
+
+      if (error) {
+        console.error("Error submitting suggestion:", error.message);
+        showMessage("Submission failed, please try again.", "error");
+      } else {
+        showMessage("Thank you for sharing your thoughts!", "success");
+        inpName.value = "";
+        inpSuggestion.value = "";
+        fetchComments(); // Refresh comments after submitting
+      }
+    };
+
+    // Fetch comments on page load
+    onMounted(fetchComments);
+
+    return { inpName, inpSuggestion, loading, submitSuggestion, message, messageType, comments };
+  }
+};
+</script>
+
   
   <style scoped>
   body {
@@ -322,5 +358,32 @@
   font-family: "Poppins", serif;
   font-size: 16px;  
   width: 100%; 
+}
+
+.comment-table {
+  font-family: "Poppins", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  text-align: justify;
+  border: 1px solid #968f8f; 
+  border-radius: 7px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); 
+  border-collapse: collapse;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.comment-table th,.comment-table td, .comment-table tr:nth-child(odd) {
+  border: 1px solid #DBD8D1; 
+  padding: 10px;
+}
+
+@media (max-width: 600px) {
+  .comment-table th,
+  .comment-table td {
+    padding: 8px;
+    font-size: 16px;
+  }
 }
   </style>
