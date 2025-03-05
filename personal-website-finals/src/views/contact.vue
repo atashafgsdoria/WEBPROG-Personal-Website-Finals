@@ -83,9 +83,8 @@ export default {
     const loading = ref(false);
     const message = ref("");
     const messageType = ref(""); 
-    const comments = ref([]); // Store comments
+    const comments = ref([]); 
 
-    // Function to show messages
     const showMessage = (msg, type) => {
       message.value = msg;
       messageType.value = type;
@@ -94,7 +93,6 @@ export default {
       }, 3000);
     };
 
-    // Fetch comments from Supabase
     const fetchComments = async () => {
       const { data, error } = await supabase.from("comments").select("*").order("id", { ascending: false });
       if (error) {
@@ -104,7 +102,6 @@ export default {
       }
     };
 
-    // Submit comment and refresh comments list
     const submitSuggestion = async () => {
       if (!inpSuggestion.value.trim()) {
         showMessage("I'd love to hear your thoughts. Thank you!", "error");
@@ -128,11 +125,10 @@ export default {
         showMessage("Thank you for sharing your thoughts!", "success");
         inpName.value = "";
         inpSuggestion.value = "";
-        fetchComments(); // Refresh comments after submitting
+        fetchComments(); 
       }
     };
 
-    // Fetch comments on page load
     onMounted(fetchComments);
 
     return { inpName, inpSuggestion, loading, submitSuggestion, message, messageType, comments };
@@ -268,16 +264,16 @@ export default {
 
   .socials:hover {
     color: black;
-    text-decoration: underline; /* Add underline on hover */
+    text-decoration: underline; 
   }
-  a[href^="mailto"] { /* Targets links that start with "mailto:" */
+  a[href^="mailto"] { 
     color: black; 
-    text-decoration: none; /* Remove default underline */
+    text-decoration: none; 
   }
 
   a[href^="mailto"]:hover {
-    text-decoration: underline; /* Add underline on hover */
-    color: black; /* Change color on hover (optional) */
+    text-decoration: underline; 
+    color: black; 
   }
   iframe {
     width: 560px auto;

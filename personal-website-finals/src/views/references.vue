@@ -264,7 +264,7 @@ td {
 
 .src_link:hover {
   color: black;
-  text-decoration: underline; /* Add underline on hover */
+  text-decoration: underline; 
 }
   </style>
   

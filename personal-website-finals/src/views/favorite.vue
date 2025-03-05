@@ -79,7 +79,6 @@
   import { ref } from 'vue';
   import { RouterLink } from 'vue-router';
   
-  // YouTube video links
   const videos = ref([
     "https://www.youtube.com/embed/5m245fHSW5o?si=mSqt-qhnAYwr8fQS&controls=0",
     "https://www.youtube.com/embed/XqQMisU5En8?si=TJJS0tLmshINfMs2&controls=0",
@@ -91,7 +90,6 @@
     "https://www.youtube.com/embed/X2PBc3smR1M?si=oA_1ppuk1pBeyPJ3&controls=0"
   ]);
   
-  // Sample watch list (this should match your `favorite.js` data structure)
   const myWatch = ref([
   { name: "I'm Tee, Me Too", url: new URL('@/assets/images/ITMT.jpg', import.meta.url).href },
   { name: 'How To Make Millions Before Grandma Dies', url: new URL('@/assets/images/HTMMBGD.jpg', import.meta.url).href },
@@ -284,23 +282,23 @@ body {
     }
   }
 
-  @media (max-width: 1024px) { /* Medium screens */
+  @media (max-width: 1024px) { 
     .watch-item {
-      flex: 1 1 calc(33.33% - 10px); /* 3 per row */
+      flex: 1 1 calc(33.33% - 10px); 
       max-width: calc(33.33% - 10px);
     }
   }
 
-  @media (max-width: 768px) { /* Small Screens */
+  @media (max-width: 768px) { 
     .watch-item {
-      flex: 1 1 calc(50% - 10px); /* 2 per row */
+      flex: 1 1 calc(50% - 10px); 
       max-width: calc(50% - 10px);
     }
   }
 
-  @media (max-width: 480px) { /* Mobile */
+  @media (max-width: 480px) { 
     .watch-item {
-      flex: 1 1 100%; /* 1 per row */
+      flex: 1 1 100%;
       max-width: 100%;
     }
   }
@@ -317,15 +315,15 @@ body {
   .watch-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between; /* Ensures proper spacing */
-    gap: 10px; /* Adds uniform spacing between items */
+    justify-content: space-between;
+    gap: 10px; 
     padding: 10px;
   }
 
   .watch-item {
-    flex: 1 1 calc(25% - 10px); /* 4 items per row */
-    max-width: calc(25% - 10px); /* Ensures correct sizing */
-    box-sizing: border-box; /* Prevents layout shifts */
+    flex: 1 1 calc(25% - 10px); 
+    max-width: calc(25% - 10px); 
+    box-sizing: border-box; 
     text-align: center;
   }
   
