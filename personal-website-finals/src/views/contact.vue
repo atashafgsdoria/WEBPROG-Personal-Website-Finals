@@ -56,6 +56,8 @@
   import { ref } from "vue";
   import { supabase } from "@/supabase";
   
+  const API_URL = "https://your-pythonanywhere-username.pythonanywhere.com/comments";
+  
   export default {
     setup() {
       const inpName = ref("");
@@ -83,20 +85,43 @@
         loading.value = true;
         message.value = ""; // Clear previous messages
   
-        const { error } = await supabase.from("comments").insert([{ 
-          name: inpName.value || "Anonymous", 
-          suggestion: inpSuggestion.value 
-        }]);
+        try {
+          // Try posting to PythonAnywhere Flask API
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: inpName.value || "Anonymous",
+              suggestion: inpSuggestion.value
+            })
+          });
   
-        loading.value = false;
+          if (!response.ok) throw new Error("Flask API failed");
   
-        if (error) {
-          console.error("Error submitting suggestion:", error.message);
-          showMessage("Submission failed, please try again.", "error");
-        } else {
           showMessage("Thank you for sharing your thoughts!", "success");
           inpName.value = "";
           inpSuggestion.value = "";
+        } catch (error) {
+          console.warn("Flask API failed, falling back to Supabase.");
+  
+          // If Flask API fails, fallback to Supabase
+          const { error: supabaseError } = await supabase.from("comments").insert([
+            {
+              name: inpName.value || "Anonymous",
+              suggestion: inpSuggestion.value
+            }
+          ]);
+  
+          if (supabaseError) {
+            console.error("Error submitting to Supabase:", supabaseError.message);
+            showMessage("Submission failed, please try again.", "error");
+          } else {
+            showMessage("Thank you for sharing your thoughts!", "success");
+            inpName.value = "";
+            inpSuggestion.value = "";
+          }
+        } finally {
+          loading.value = false;
         }
       };
   
