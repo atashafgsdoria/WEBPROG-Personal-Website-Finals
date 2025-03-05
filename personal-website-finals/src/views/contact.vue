@@ -18,7 +18,7 @@
         </div>
       </nav>
     </div>
-  
+    <br><br>
     <div class="flex-container">
       <div class="flex-item-title">
         <h1>CONNECT</h1>

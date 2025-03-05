@@ -9,9 +9,9 @@
           <span class="material-symbols-outlined" style="font-size: 30px;">home</span>
         </router-link>
 
-        <router-link to="/favorite" class="favorite-icons" data-tooltip="LET'S UNLOCK...">
-          <span class="material-symbols-outlined" style="font-size: 30px;">favorite</span>
-        </router-link>
+        <RouterLink to="/education" class="education-icons" data-tooltip="I, AS A STUDENT...">
+          <span class="material-symbols-outlined">school</span>
+        </RouterLink>
 
         <router-link to="/contact" class="comment-icons" data-tooltip="CONNECT...">
           <span class="material-symbols-outlined" style="font-size: 30px;">mode_comment</span>
