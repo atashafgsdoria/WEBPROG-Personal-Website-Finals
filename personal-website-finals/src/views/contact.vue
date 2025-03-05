@@ -49,83 +49,105 @@
           {{ loading ? "Submitting..." : "Submit" }}
         </button>
       </div>
+
+      <h6>Previous Comments</h6>
+        <ul v-if="comments.length">
+          <li v-for="comment in comments" :key="comment.id">
+            <strong>{{ comment.name }}:</strong> {{ comment.suggestion }}
+          </li>
+        </ul>
+        <p v-else>No comments yet. Be the first to share your thoughts!</p>
     </div>
   </template>
   
   <script>
-  import { ref } from "vue";
-  import { supabase } from "@/supabase";
-  
-  const API_URL = "https://atashafgsdoria.pythonanywhere.com/";
-  
-  export default {
-    setup() {
-      const inpName = ref("");
-      const inpSuggestion = ref("");
-      const loading = ref(false);
-      const message = ref("");
-      const messageType = ref(""); 
+import { ref, onMounted } from "vue";
+import { supabase } from "@/supabase";
 
-      const showMessage = (msg, type) => {
-        message.value = msg;
-        messageType.value = type;
-  
-        setTimeout(() => {
-          message.value = "";
-        }, 3000);
-      };
-  
-      const submitSuggestion = async () => {
-        if (!inpSuggestion.value.trim()) {
-          showMessage("I'd love to hear your thoughts. Thank you!", "error");
-          return;
-        }
-  
-        loading.value = true;
-        message.value = ""; 
-  
-        try {
-          const response = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: inpName.value || "Anonymous",
-              suggestion: inpSuggestion.value
-            })
-          });
-  
-          if (!response.ok) throw new Error("Flask API failed");
-  
+const API_URL = "https://atashafgsdoria.pythonanywhere.com/";
+
+export default {
+  setup() {
+    const inpName = ref("");
+    const inpSuggestion = ref("");
+    const comments = ref([]); 
+    const loading = ref(false);
+    const message = ref("");
+    const messageType = ref(""); 
+
+    const showMessage = (msg, type) => {
+      message.value = msg;
+      messageType.value = type;
+      setTimeout(() => { message.value = ""; }, 3000);
+    };
+
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error("Failed to fetch comments");
+
+        comments.value = await response.json();
+      } catch (error) {
+        console.error("Error fetching comments:", error.message);
+        showMessage("Could not load comments.", "error");
+      }
+    };
+
+    const submitSuggestion = async () => {
+      if (!inpSuggestion.value.trim()) {
+        showMessage("I'd love to hear your thoughts. Thank you!", "error");
+        return;
+      }
+
+      loading.value = true;
+      message.value = "";
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: inpName.value || "Anonymous",
+            suggestion: inpSuggestion.value
+          })
+        });
+
+        if (!response.ok) throw new Error("Flask API failed");
+
+        showMessage("Thank you for sharing your thoughts!", "success");
+        inpName.value = "";
+        inpSuggestion.value = "";
+
+        fetchComments();
+      } catch (error) {
+        console.warn("Flask API failed, falling back to Supabase.");
+
+        const { error: supabaseError } = await supabase.from("comments").insert([
+          { name: inpName.value || "Anonymous", suggestion: inpSuggestion.value }
+        ]);
+
+        if (supabaseError) {
+          console.error("Error submitting to Supabase:", supabaseError.message);
+          showMessage("Submission failed, please try again.", "error");
+        } else {
           showMessage("Thank you for sharing your thoughts!", "success");
           inpName.value = "";
           inpSuggestion.value = "";
-        } catch (error) {
-          console.warn("Flask API failed, falling back to Supabase.");
-  
-          const { error: supabaseError } = await supabase.from("comments").insert([
-            {
-              name: inpName.value || "Anonymous",
-              suggestion: inpSuggestion.value
-            }
-          ]);
-  
-          if (supabaseError) {
-            console.error("Error submitting to Supabase:", supabaseError.message);
-            showMessage("Submission failed, please try again.", "error");
-          } else {
-            showMessage("Thank you for sharing your thoughts!", "success");
-            inpName.value = "";
-            inpSuggestion.value = "";
-          }
-        } finally {
-          loading.value = false;
+
+          fetchComments();
         }
-      };
-  
-      return { inpName, inpSuggestion, loading, submitSuggestion, message, messageType };
-    }
-  };
-  </script>
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    onMounted(fetchComments);
+
+    return { inpName, inpSuggestion, comments, loading, submitSuggestion, message, messageType };
+  }
+};
+</script>
+
   
   <style scoped>
   body {
@@ -344,5 +366,26 @@
   font-family: "Poppins", serif;
   font-size: 16px;  
   width: 100%; 
+}
+
+ul {
+  padding: 0;
+  margin: 10px 0;
+}
+
+ul li {
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #DBD8D1;
+  font-weight: bold;
+  font-family: "Poppins", serif;
+  width: 100%; 
+}
+
+ul li strong {
+  color: black;
+  font-weight: bold;
 }
   </style>
