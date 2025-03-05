@@ -18,7 +18,7 @@
         </div>
       </nav>
     </div>
-    <br><br>
+    <br>
     <div class="flex-container">
       <div class="flex-item-title">
         <h1>CONNECT</h1>
@@ -68,6 +68,7 @@
         message.value = msg;
         messageType.value = type;
   
+        // Message disappears after 3 seconds
         setTimeout(() => {
           message.value = "";
         }, 3000);
