@@ -56,7 +56,7 @@
   import { ref } from "vue";
   import { supabase } from "@/supabase";
   
-  const API_URL = "https://your-pythonanywhere-username.pythonanywhere.com/comments";
+  const API_URL = "https://atashafgsdoria.pythonanywhere.com/";
   
   export default {
     setup() {
@@ -64,13 +64,12 @@
       const inpSuggestion = ref("");
       const loading = ref(false);
       const message = ref("");
-      const messageType = ref(""); // "success" or "error" class
-  
+      const messageType = ref(""); 
+
       const showMessage = (msg, type) => {
         message.value = msg;
         messageType.value = type;
   
-        // Message disappears after 3 seconds
         setTimeout(() => {
           message.value = "";
         }, 3000);
@@ -83,10 +82,9 @@
         }
   
         loading.value = true;
-        message.value = ""; // Clear previous messages
+        message.value = ""; 
   
         try {
-          // Try posting to PythonAnywhere Flask API
           const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -104,7 +102,6 @@
         } catch (error) {
           console.warn("Flask API failed, falling back to Supabase.");
   
-          // If Flask API fails, fallback to Supabase
           const { error: supabaseError } = await supabase.from("comments").insert([
             {
               name: inpName.value || "Anonymous",
